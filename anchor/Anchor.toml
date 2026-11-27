@@ -1,0 +1,16 @@
+[toolchain]
+anchor_version = "0.32.1"
+
+[features]
+resolution = true
+skip-lint = false
+
+[programs.localnet]
+solana_academy = "9jvjBfgykeWZz7UM8xyJQeVP6jNWDsXaWXL2maeAF4Bw"
+
+[programs.devnet]
+solana_academy = "9jvjBfgykeWZz7UM8xyJQeVP6jNWDsXaWXL2maeAF4Bw"
+
+[provider]
+cluster = "Devnet"
+wallet = "~/.config/solana/id.json"
