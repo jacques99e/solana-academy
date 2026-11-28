@@ -1,44 +1,115 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Solana Academy
 
-## Getting Started
+## Le Duolingo du Web3 sur Solana
 
-First, run the development server:
+Solana Academy est un parcours interactif qui aide les débutants à comprendre Solana en pratiquant. En dix missions progressives, les apprenants découvrent les concepts, connectent un wallet de test, explorent Devnet et terminent par une interaction vérifiable avec un programme Rust/Anchor.
+
+> **Projet hackathon Dev3pack** · Application et démonstrations sur **Solana Devnet**. Les SOL de test n'ont aucune valeur réelle.
+
+| Ressource | Lien |
+| --- | --- |
+| Application en ligne | [URL Vercel]() |
+| Vidéo de démonstration | [Lien vers la démo]() |
+| Program ID · Devnet | `[PROGRAM_ID]` |
+
+Remplace les liens et `[PROGRAM_ID]` par les valeurs de livraison avant la soumission.
+
+## Pourquoi Solana Academy ?
+
+Le Web3 peut être difficile à aborder : nouveaux concepts, wallets, réseaux et transactions sont souvent présentés sans parcours guidé. Solana Academy décompose l'apprentissage en objectifs simples, explications, défis et manipulations sur Devnet. Chaque étape prépare la suivante et permet de vérifier ce qui a été appris.
+
+## Parcours en 10 missions
+
+1. **Blockchain** — Comprendre les blocs, les transactions et les validateurs.
+2. **Solana** — Découvrir les mécanismes du réseau et le rôle de SOL.
+3. **Devnet** — Apprendre à tester sans risquer de fonds Mainnet.
+4. **Wallet** — Adopter les réflexes essentiels de sécurité.
+5. **Connexion** — Relier un wallet et vérifier l'adresse publique.
+6. **Airdrop** — Obtenir et vérifier des SOL de test.
+7. **Solde** — Lire le solde d'un compte sur Devnet.
+8. **Explorer** — Retrouver et examiner une transaction confirmée.
+9. **Signer** — Signer un message et comprendre la preuve produite.
+10. **Anchor** — Appeler un programme Rust et vérifier un compte PDA.
+
+Les missions 1 à 3 proposent des quiz de validation. Les missions suivantes associent des mini-défis de compréhension à une activité pratique : checklist de sécurité, connexion du wallet, lecture de données ou action sur Devnet.
+
+## Fonctionnalités
+
+- **Dix missions progressives** avec objectifs, cours, compétences visées et liens vers l'étape suivante.
+- **Quiz et mini-défis interactifs** avec explications après les réponses.
+- **Progression sauvegardée localement** et reprise à la prochaine mission.
+- **Connexion Phantom ou Solflare** avec l'adaptateur wallet Solana.
+- **Pratique sur Devnet** : demande de SOL de test, lecture de solde et exploration de transactions confirmées.
+- **Signature de message** pour comprendre une preuve de contrôle du wallet, distincte d'une transaction on-chain.
+- **Mission finale Rust/Anchor** : envoi d'une instruction, confirmation de la transaction et vérification du PDA et du statut du diplôme.
+- **Preuves consultables** avec liens vers Solana Explorer ou Solscan.
+
+## Stack technique
+
+| Domaine | Technologies |
+| --- | --- |
+| Interface et routes | Next.js 16, React 19, TypeScript |
+| Styles | Tailwind CSS 4 |
+| Wallets | Solana Wallet Adapter, Phantom, Solflare |
+| Réseau et transactions | `@solana/web3.js` |
+| Programme on-chain | Rust, Anchor 0.32.1 |
+| Réseau de démonstration | Solana Devnet |
+
+## Démarrer en local
+
+### Prérequis
+
+- Node.js et npm
+- Un wallet compatible Solana (Phantom ou Solflare) pour les missions pratiques
+- Des SOL Devnet pour envoyer des transactions de test
+
+### Installation
+
+```bash
+git clone <URL_DU_DEPOT>
+cd solana-academy
+npm install
+```
+
+Crée un fichier `.env.local` à la racine et configure le Program ID Devnet :
+
+```env
+NEXT_PUBLIC_SOLANA_ACADEMY_PROGRAM_ID=[PROGRAM_ID]
+```
+
+Cette variable est nécessaire à la mission Anchor. Les autres missions peuvent être explorées sans elle. Ne mets jamais de clé privée ou de phrase de récupération dans un fichier du projet.
+
+Lance l'application :
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvre [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Vérifications
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run lint
+npm run build
+```
 
-## Mission 10: Anchor sur Devnet
+## Programme Anchor
 
-Le programme Anchor se trouve dans `anchor/`. Sous Windows, utilisez WSL2 avec Rust, la Solana CLI et Anchor CLI 0.32.1. Avant `anchor build`, générez la clé du programme et remplacez l'adresse d'exemple dans `anchor/Anchor.toml` et `anchor/programs/solana_academy/src/lib.rs` par son adresse publique. Après `anchor deploy`, définissez cette adresse comme `NEXT_PUBLIC_SOLANA_ACADEMY_PROGRAM_ID` dans `.env.local`, puis redémarrez Next.js.
+Le code Rust se trouve dans [`anchor/programs/solana_academy/src/lib.rs`](./anchor/programs/solana_academy/src/lib.rs). Il expose `enregistrer_diplome` et crée, au besoin, un compte PDA associé au wallet signataire.
 
-Sur la Mission 10, le frontend attend la confirmation de la transaction puis relit le compte PDA sur Devnet. Il ne valide la mission qu'après avoir vérifié que le compte appartient au wallet connecté et que `niveau_1_valide` est vrai. L'adresse du PDA et un lien vers Solana Explorer sont affichés comme preuve.
+La mission 10 est configurée avec `NEXT_PUBLIC_SOLANA_ACADEMY_PROGRAM_ID`. Après une transaction confirmée, le frontend relit le compte et vérifie que le wallet correspond et que `niveau_1_valide` est vrai avant d'enregistrer la réussite.
 
-Gardez les fichiers de clés du programme et du wallet de déploiement privés. Le dossier `anchor/target/` est ignoré par Git.
+Le programme doit être déployé sur **Devnet**. Pour le compiler dans le navigateur, suivre le [guide officiel Anchor pour Solana Playground](https://www.anchor-lang.com/docs/quickstart/solpg). Le wallet connecté dans l'application doit également disposer de SOL Devnet pour payer les frais de la transaction.
 
-## Learn More
+## Sécurité
 
-To learn more about Next.js, take a look at the following resources:
+- Utilise Devnet pour les exercices : ses tokens sont fictifs et sans valeur.
+- Ne partage jamais une phrase de récupération ou une clé privée.
+- Vérifie le réseau et le contenu avant d'approuver une demande dans ton wallet.
+- `.env.local` est ignoré par Git ; le Program ID, lui, est une adresse publique.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Démo hackathon
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Le script minuté de la vidéo (durée cible : **2 min 55 s**) est disponible dans [`DEMO_SCRIPT.md`](./DEMO_SCRIPT.md).
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
