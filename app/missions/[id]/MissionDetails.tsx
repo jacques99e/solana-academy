@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { BookOpen, CheckCircle2 } from "lucide-react";
 import Quiz, { type QuizQuestion } from "@/components/quiz/Quiz";
 import { missions } from "@/lib/missions";
+import NextMissionButton from "@/components/missions/NextMissionButton";
 import MissionActions from "./MissionActions";
 
 type LessonSection = {
@@ -279,6 +280,7 @@ export default async function MissionDetails({
           <MissionActions missionId={mission.id} />
         )}
       </div>
+      <NextMissionButton missionId={mission.id} />
     </section>
   );
 }

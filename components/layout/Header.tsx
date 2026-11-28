@@ -1,6 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import Link from "next/link";
 import { GraduationCap } from "lucide-react";
 import { BaseWalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
@@ -17,8 +18,8 @@ export default function Header() {
 
   return (
     <header className="mx-auto flex h-[76px] w-full max-w-6xl items-center justify-between border-b border-white/[0.07] px-5 sm:px-8">
-      <a
-        href="#top"
+      <Link
+        href="/"
         className="flex items-center gap-2.5"
         aria-label="Solana Academy, accueil"
       >
@@ -26,7 +27,7 @@ export default function Header() {
           <GraduationCap aria-hidden="true" size={18} strokeWidth={2.2} />
         </span>
         <span className="text-sm font-semibold tracking-wide">SOLANA ACADEMY</span>
-      </a>
+      </Link>
 
       <div className="flex items-center gap-3">
         <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/20 bg-emerald-400/[0.08] px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-emerald-300">
