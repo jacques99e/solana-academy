@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { markMissionCompleted } from "@/lib/progress";
+import useWalletProgress from "@/components/progress/useWalletProgress";
 
 const safetyRules = [
   "Je ne partage jamais ma phrase secrète ni ma clé privée.",
@@ -9,17 +9,13 @@ const safetyRules = [
   "Je vérifie le réseau et les détails avant de signer une transaction.",
 ];
 
-type WalletSafetyChecklistProps = {
-  completed: boolean;
-};
-
-export default function WalletSafetyChecklist({
-  completed,
-}: WalletSafetyChecklistProps) {
+export default function WalletSafetyChecklist() {
+  const { completedMissions, markCompleted } = useWalletProgress();
+  const completed = completedMissions.includes(4);
   const [checkedRules, setCheckedRules] = useState<boolean[]>(
     () => safetyRules.map(() => completed),
   );
-  const [isValidated, setIsValidated] = useState(completed);
+  const isValidated = completed;
   const [error, setError] = useState<string | null>(null);
   const canValidate = checkedRules.every(Boolean);
 
@@ -36,8 +32,7 @@ export default function WalletSafetyChecklist({
 
     setError(null);
     try {
-      markMissionCompleted(4);
-      setIsValidated(true);
+      markCompleted(4);
     } catch (validationError) {
       setError(
         validationError instanceof Error

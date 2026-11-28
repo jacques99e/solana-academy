@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { markMissionCompleted } from "@/lib/progress";
+import useWalletProgress from "@/components/progress/useWalletProgress";
 
 export type QuizQuestion = {
   question: string;
@@ -17,10 +17,11 @@ type QuizProps = {
 };
 
 export default function Quiz({ missionId, questions }: QuizProps) {
+  const { completedMissions, markCompleted } = useWalletProgress();
   const [answers, setAnswers] = useState<(number | null)[]>(
     () => questions.map(() => null),
   );
-  const [isMissionValidated, setIsMissionValidated] = useState(false);
+  const isMissionValidated = completedMissions.includes(missionId);
   const [validationError, setValidationError] = useState<string | null>(null);
 
   const allQuestionsCorrect =
@@ -46,8 +47,7 @@ export default function Quiz({ missionId, questions }: QuizProps) {
 
     setValidationError(null);
     try {
-      markMissionCompleted(missionId);
-      setIsMissionValidated(true);
+      markCompleted(missionId);
     } catch (error) {
       setValidationError(
         error instanceof Error

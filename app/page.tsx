@@ -1,6 +1,5 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
 import {
   ArrowUpRight,
   Coins,
@@ -12,12 +11,7 @@ import MissionCard from "@/components/missions/MissionCard";
 import Header from "@/components/layout/Header";
 import ProgressBar from "@/components/layout/ProgressBar";
 import { missions } from "@/lib/missions";
-import {
-  getProgressSnapshot,
-  getServerProgressSnapshot,
-  parseCompletedMissions,
-  subscribeToProgress,
-} from "@/lib/progress";
+import useWalletProgress from "@/components/progress/useWalletProgress";
 
 const upcomingMissions = [
   { title: "Token SPL", description: "Crée et gère des tokens.", icon: Coins },
@@ -26,12 +20,11 @@ const upcomingMissions = [
 ];
 
 export default function Home() {
-  const progressSnapshot = useSyncExternalStore(
-    subscribeToProgress,
-    getProgressSnapshot,
-    getServerProgressSnapshot,
-  );
-  const completedMissions = parseCompletedMissions(progressSnapshot);
+  const {
+    completedCount,
+    missionStatuses,
+    progressError,
+  } = useWalletProgress();
 
   return (
     <main className="min-h-screen flex-1 bg-[#080b11] text-slate-100">
@@ -71,7 +64,12 @@ export default function Home() {
               10 missions
             </span>
           </div>
-          <ProgressBar completed={completedMissions.length} total={missions.length} />
+          <ProgressBar completed={completedCount} total={missions.length} />
+          {progressError && (
+            <p role="alert" className="mt-3 text-sm text-rose-300">
+              {progressError}
+            </p>
+          )}
         </section>
 
         <section aria-labelledby="missions-heading">
@@ -85,15 +83,15 @@ export default function Home() {
               </h2>
             </div>
             <span className="hidden text-xs text-slate-500 sm:block">
-              {completedMissions.length} terminées sur {missions.length}
+              {completedCount} terminées sur {missions.length}
             </span>
           </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-            {missions.map((mission) => (
+            {missions.map((mission, index) => (
               <MissionCard
                 key={mission.id}
                 mission={mission}
-                completed={completedMissions.includes(mission.id)}
+                status={missionStatuses[index] ?? "locked"}
               />
             ))}
           </div>

@@ -2,28 +2,18 @@
 
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
 import { missions } from "@/lib/missions";
-import {
-  getProgressSnapshot,
-  getServerProgressSnapshot,
-  parseCompletedMissions,
-  subscribeToProgress,
-} from "@/lib/progress";
+import { getMissionStatus } from "@/lib/progress";
+import useWalletProgress from "@/components/progress/useWalletProgress";
 
 type NextMissionButtonProps = {
   missionId: number;
 };
 
 export default function NextMissionButton({ missionId }: NextMissionButtonProps) {
-  const progressSnapshot = useSyncExternalStore(
-    subscribeToProgress,
-    getProgressSnapshot,
-    getServerProgressSnapshot,
-  );
-  const missionCompleted = parseCompletedMissions(progressSnapshot).includes(
-    missionId,
-  );
+  const { completedMissions } = useWalletProgress();
+  const missionCompleted =
+    getMissionStatus(missionId, completedMissions) === "completed";
 
   if (!missionCompleted) return null;
 

@@ -6,22 +6,20 @@ import {
   getRecentTransactions,
   type RecentTransaction,
 } from "@/lib/solana";
-import { markMissionCompleted } from "@/lib/progress";
+import useWalletProgress from "@/components/progress/useWalletProgress";
 
 type TransactionExplorerProps = {
   publicKey: PublicKey | null;
-  completed: boolean;
 };
 
 export default function TransactionExplorer({
   publicKey,
-  completed,
 }: TransactionExplorerProps) {
+  const { completedMissions, markCompleted } = useWalletProgress();
   const [transactions, setTransactions] = useState<RecentTransaction[]>([]);
   const [selectedSignature, setSelectedSignature] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isValidated, setIsValidated] = useState(completed);
   const [validationError, setValidationError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -71,8 +69,7 @@ export default function TransactionExplorer({
 
     setValidationError(null);
     try {
-      markMissionCompleted(8);
-      setIsValidated(true);
+      markCompleted(8);
     } catch (validationError) {
       setValidationError(
         validationError instanceof Error
@@ -158,7 +155,7 @@ export default function TransactionExplorer({
               {validationError}
             </p>
           )}
-          {isValidated ? (
+          {completedMissions.includes(8) ? (
             <p role="status" className="text-sm text-emerald-300">
               Mission validée : tu as sélectionné une transaction confirmée.
             </p>

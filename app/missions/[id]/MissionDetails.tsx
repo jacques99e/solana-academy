@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { BookOpen, CheckCircle2 } from "lucide-react";
+import MissionAccessGuard from "@/components/missions/MissionAccessGuard";
 import Quiz, { type QuizQuestion } from "@/components/quiz/Quiz";
 import { missions } from "@/lib/missions";
 import NextMissionButton from "@/components/missions/NextMissionButton";
@@ -190,7 +191,8 @@ export default async function MissionDetails({
   const Icon = mission.icon;
 
   return (
-    <section className="mt-6 rounded-md border border-slate-800 bg-slate-900/70 p-6 sm:p-8">
+    <MissionAccessGuard missionId={mission.id}>
+      <section className="mt-6 rounded-md border border-slate-800 bg-slate-900/70 p-6 sm:p-8">
       <div className="flex items-start gap-4">
         <span className="flex size-12 shrink-0 items-center justify-center rounded-md border border-emerald-300/15 bg-emerald-300/[0.06] text-emerald-200">
           <Icon aria-hidden="true" size={22} />
@@ -281,6 +283,7 @@ export default async function MissionDetails({
         )}
       </div>
       <NextMissionButton missionId={mission.id} />
-    </section>
+      </section>
+    </MissionAccessGuard>
   );
 }

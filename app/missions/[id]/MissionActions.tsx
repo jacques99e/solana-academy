@@ -12,16 +12,9 @@ import {
   signMessage,
   type DiplomaStatus,
 } from "@/lib/solana";
-import {
-  getProgressSnapshot,
-  getServerProgressSnapshot,
-  markMissionCompleted,
-  parseCompletedMissions,
-  subscribeToProgress,
-} from "@/lib/progress";
-import { useSyncExternalStore } from "react";
 import TransactionExplorer from "@/components/missions/TransactionExplorer";
 import WalletSafetyChecklist from "@/components/missions/WalletSafetyChecklist";
+import useWalletProgress from "@/components/progress/useWalletProgress";
 
 type MissionActionsProps = {
   missionId: number;
@@ -30,12 +23,7 @@ type MissionActionsProps = {
 export default function MissionActions({ missionId }: MissionActionsProps) {
   const wallet = useWallet();
   const { connected, publicKey, sendTransaction } = wallet;
-  const progressSnapshot = useSyncExternalStore(
-    subscribeToProgress,
-    getProgressSnapshot,
-    getServerProgressSnapshot,
-  );
-  const completedMissions = parseCompletedMissions(progressSnapshot);
+  const { completedMissions, markCompleted, walletAddress } = useWalletProgress();
   const [isRequestingAirdrop, setIsRequestingAirdrop] = useState(false);
   const [transactionSignature, setTransactionSignature] = useState<string | null>(
     null,
@@ -90,7 +78,7 @@ export default function MissionActions({ missionId }: MissionActionsProps) {
 
   function completeMission(id: number) {
     try {
-      markMissionCompleted(id);
+      markCompleted(id);
       setProgressError(null);
     } catch (error) {
       setProgressError(
@@ -148,7 +136,7 @@ export default function MissionActions({ missionId }: MissionActionsProps) {
           Avant d’utiliser un wallet, adopte ces réflexes de sécurité. Coche chaque
           règle après l’avoir lue.
         </p>
-        <WalletSafetyChecklist completed={completedMissions.includes(4)} />
+        <WalletSafetyChecklist key={walletAddress ?? "guest"} />
       </div>
     );
   }
@@ -481,7 +469,6 @@ export default function MissionActions({ missionId }: MissionActionsProps) {
         <TransactionExplorer
           key={publicKey?.toBase58() ?? "disconnected"}
           publicKey={connected ? publicKey : null}
-          completed={completedMissions.includes(8)}
         />
       </div>
     );
@@ -662,6 +649,7 @@ export default function MissionActions({ missionId }: MissionActionsProps) {
 }
 
 function BalancePanel({ publicKey }: { publicKey: PublicKey }) {
+  const { markCompleted } = useWalletProgress();
   const [balance, setBalance] = useState<number | null>(null);
   const [isLoadingBalance, setIsLoadingBalance] = useState(true);
   const [balanceError, setBalanceError] = useState<string | null>(null);
@@ -669,7 +657,7 @@ function BalancePanel({ publicKey }: { publicKey: PublicKey }) {
 
   function recordMissionCompletion() {
     try {
-      markMissionCompleted(7);
+      markCompleted(7);
       setProgressError(null);
     } catch (error) {
       setProgressError(
